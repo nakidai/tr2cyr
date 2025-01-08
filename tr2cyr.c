@@ -76,7 +76,7 @@ int Translator_convert(FILE *file, Translator_Writer *writer, void *arg)
         CASE(L'u', L'у', L'У');
         CASE(L'f', L'ф', L'Ф');
         CASE(L'h', L'х', L'Х');
-        CASE(L'c', L'ц', L'Й');
+        CASE(L'c', L'ц', L'Ц');
         case 'y':
         {
             if ((ch = getwchar()) == WEOF)
