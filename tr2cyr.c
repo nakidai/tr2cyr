@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <locale.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <wchar.h>
 #include <wctype.h>
@@ -41,13 +42,15 @@
  */
 
 typedef int Translator_Writer(wchar_t ch, void *arg);
+typedef wint_t Translator_Reader(size_t i, void *arg);
 
-int Translator_convert(FILE *file, Translator_Writer *writer, void *arg)
+int Translator_convert(Translator_Reader *reader, void *readerarg, Translator_Writer *writer, void *writerarg)
 {
+    size_t i;
     int lowercase;
     wint_t ch;
 
-    while ((ch = getwchar()) != WEOF)
+    while ((ch = reader(i++, readerarg)) != WEOF)
     {
         lowercase = towlower(ch) == ch;
 
@@ -79,9 +82,9 @@ int Translator_convert(FILE *file, Translator_Writer *writer, void *arg)
         CASE(L'c', L'ц', L'Ц');
         case 'y':
         {
-            if ((ch = getwchar()) == WEOF)
+            if ((ch = reader(i++, readerarg)) == WEOF)
             {
-                writer(lowercase ? L'y' : L'Y', arg);
+                writer(lowercase ? L'y' : L'Y', writerarg);
                 return errno ? -1 : 0;
             }
 
@@ -100,7 +103,7 @@ int Translator_convert(FILE *file, Translator_Writer *writer, void *arg)
             CASE(L'a', L'я', L'Я');
             default:
             {
-                int ret = writer(lowercase ? L'y' : L'Y', arg);
+                int ret = writer(lowercase ? L'y' : L'Y', writerarg);
                 if (ret)
                     return ret;
 
@@ -113,11 +116,16 @@ int Translator_convert(FILE *file, Translator_Writer *writer, void *arg)
         }
 #undef CASE
 
-        int ret = writer(towrite, arg);
+        int ret = writer(towrite, writerarg);
         if (ret)
             return ret;
     }
     return errno ? -1 : 0;
+}
+
+static wint_t reader(size_t i, void *arg)
+{
+    return getwchar();
 }
 
 static int writer(wchar_t ch, void *arg)
@@ -129,5 +137,5 @@ static int writer(wchar_t ch, void *arg)
 int main(int argc, char **argv)
 {
     setlocale(LC_CTYPE, "");
-    Translator_convert(stdin, &writer, 0);
+    Translator_convert(&reader, 0, &writer, 0);
 }
