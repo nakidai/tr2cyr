@@ -120,6 +120,6 @@ static int writer(wchar_t ch, void *arg)
 
 int main(int argc, char **argv)
 {
-    setlocale(LC_CTYPE, "ru_RU.UTF-8");
+    setlocale(LC_CTYPE, "");
     Translator_convert(stdin, &writer, 0);
 }
