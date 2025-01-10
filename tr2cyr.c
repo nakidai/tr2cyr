@@ -7,7 +7,7 @@
 
 int tr2cyr(tr2cyr_reader *reader, void *readerarg, tr2cyr_writer *writer, void *writerarg)
 {
-    size_t i;
+    size_t i = 0;
     int lowercase;
     wint_t ch;
 
