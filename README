@@ -6,6 +6,13 @@ NAME
 DESCRIPTION
      Just simple tool I made because I have nothing to do.
 
+     Well, because of meeting some comments about non-intuitive table of
+     translation, I should say that tr2cyr is intended to be used first of all
+     in tools in my environment, when I don't have access to Russian layout.
+     The purpose of this tool is to provide an ability to make any combination
+     of cyrillic characters.  Also, I didn't want to complicate the tool.  So
+     I created tr2cyr that way in the end.
+
 SEE ALSO
      tr2cyr(1), tr2cyr(3)
 
