@@ -1,50 +1,11 @@
 #include <errno.h>
-#include <locale.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <wchar.h>
 #include <wctype.h>
 
-/*
- * a = а
- * b = б
- * v = в
- * g = г
- * d = д
- * e = е
- * yo = ё
- * yz = ж
- * z = з
- * i = и
- * j = й
- * k = к
- * l = л
- * m = м
- * n = н
- * o = о
- * p = п
- * r = р
- * s = с
- * t = т
- * u = у
- * f = ф
- * h = х
- * c = ц
- * yc = ч
- * ys = ш
- * yg = щ
- * y" = ъ
- * yi = ы
- * y' = ь
- * ye = э
- * yu = ю
- * ya = я
- */
+#include "tr2cyr.h"
 
-typedef int Translator_Writer(wchar_t ch, void *arg);
-typedef wint_t Translator_Reader(size_t i, void *arg);
 
-int Translator_convert(Translator_Reader *reader, void *readerarg, Translator_Writer *writer, void *writerarg)
+int tr2cyr(tr2cyr_reader *reader, void *readerarg, tr2cyr_writer *writer, void *writerarg)
 {
     size_t i;
     int lowercase;
@@ -121,21 +82,4 @@ int Translator_convert(Translator_Reader *reader, void *readerarg, Translator_Wr
             return ret;
     }
     return errno ? -1 : 0;
-}
-
-static wint_t reader(size_t i, void *arg)
-{
-    return getwchar();
-}
-
-static int writer(wchar_t ch, void *arg)
-{
-    (void)arg;
-    return putwchar(ch) == WEOF ? -1 : 0;
-}
-
-int main(int argc, char **argv)
-{
-    setlocale(LC_CTYPE, "");
-    Translator_convert(&reader, 0, &writer, 0);
 }
