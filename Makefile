@@ -6,26 +6,26 @@ OBJS += tr2cyr.o
 OBJS.tr2cyr += tr2cyr_exec.o
 
 
-all: tr2cyr tr2cyr.a tr2cyr.so
+all: tr2cyr libtr2cyr.a libtr2cyr.so
 
-tr2cyr tr2cyr.a tr2cyr.so: ${OBJS}
+tr2cyr libtr2cyr.a libtr2cyr.so: ${OBJS}
 tr2cyr: ${OBJS.tr2cyr}
 
 tr2cyr.c tr2cyr_exec.c: tr2cyr.h
 
 .SUFFIXES: .o .a
-.o.a:
-	${AR} rcs $@ $^
+libtr2cyr.a:
+	${AR} rcs libtr2cyr.a ${OBJS}
 
 .SUFFIXES: .o .so
-.o.so:
-	${LD} -shared -o $@ ${LDFLAGS} ${LDLIBS} $^
+libtr2cyr.so:
+	${LD} -shared -o libtr2cyr.so ${LDFLAGS} ${LDLIBS} ${OBJS}
 
 README: README.7
 	mandoc -Tascii $< | col -b > $@
 
 clean:
-	${RM} tr2cyr tr2cyr.a tr2cyr.so ${OBJS} ${OBJS.tr2cyr}
+	${RM} tr2cyr libtr2cyr.a libtr2cyr.so ${OBJS} ${OBJS.tr2cyr}
 
 
 .PHONY: install
@@ -37,10 +37,10 @@ install_bin: tr2cyr
 	install -m755 tr2cyr ${DESTDIR}/bin
 
 .PHONY: install_lib
-install_lib: tr2cyr.a tr2cyr.so
+install_lib: libtr2cyr.a libtr2cyr.so
 	install -d ${DESTDIR}/lib ${DESTDIR}/include
-	install -m644 tr2cyr.a ${DESTDIR}/lib
-	install -m755 tr2cyr.so ${DESTDIR}/lib
+	install -m644 libtr2cyr.a ${DESTDIR}/lib
+	install -m755 libtr2cyr.so ${DESTDIR}/lib
 	install -m644 tr2cyr.h ${DESTDIR}/include
 
 .PHONY: install_man1
@@ -63,7 +63,7 @@ uninstall_bin:
 
 .PHONY: uninstall_lib
 uninstall_lib:
-	${RM} ${DESTDIR}/lib/tr2cyr.a ${DESTDIR}/lib/tr2cyr.so ${DESTDIR}/include/tr2cyr.h
+	${RM} ${DESTDIR}/lib/libtr2cyr.a ${DESTDIR}/lib/libtr2cyr.so ${DESTDIR}/include/tr2cyr.h
 
 .PHONY: uninstall_man1
 uninstall_man1:
