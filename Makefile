@@ -1,6 +1,5 @@
 DESTDIR ?= /usr/local
-
-CFLAGS.tr2cyr += -DEXEC
+RM ?= rm -f
 
 OBJS += tr2cyr.o
 OBJS.tr2cyr += tr2cyr_exec.o
@@ -8,18 +7,16 @@ OBJS.tr2cyr += tr2cyr_exec.o
 
 all: tr2cyr libtr2cyr.a libtr2cyr.so
 
-tr2cyr libtr2cyr.a libtr2cyr.so: ${OBJS}
-tr2cyr: ${OBJS.tr2cyr}
-
 tr2cyr.c tr2cyr_exec.c: tr2cyr.h
 
-.SUFFIXES: .o .a
-libtr2cyr.a:
+tr2cyr: tr2cyr.o tr2cyr_exec.o
+	${CC} -o tr2cyr ${LDFLAGS} ${LDLIBS} ${OBJS} ${OBJS.tr2cyr}
+
+libtr2cyr.a: ${OBJS}
 	${AR} rcs libtr2cyr.a ${OBJS}
 
-.SUFFIXES: .o .so
-libtr2cyr.so:
-	${LD} -shared -o libtr2cyr.so ${LDFLAGS} ${LDLIBS} ${OBJS}
+libtr2cyr.so: ${OBJS}
+	${CC} -shared -o libtr2cyr.so ${LDFLAGS} ${LDLIBS} ${OBJS}
 
 README: README.7
 	mandoc -Tascii $< | col -b > $@
